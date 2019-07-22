@@ -59,6 +59,23 @@ def get_categories(url):
     
     return items
 
+def get_main_categories():
+    
+    url = 'https://saltdeanstamps.com/'
+    
+    items = {}
+    try:
+        html = get_html(url)
+        category_items = html.select('#category-menu a')
+        for category_item in category_items:
+            item_url = 'https://saltdeanstamps.com/' + category_item.get('href')
+            item_text = category_item.get_text().strip()
+            if item_text != 'Thematic':
+                items[item_text] = item_url
+    except: 
+        pass
+
+    return items
 
 def get_details(url):
 
@@ -149,13 +166,8 @@ def get_details(url):
     sleep(randint(25, 65))
     return stamp
 
-categories = {
-'channel islands': 'https://saltdeanstamps.com/channel-islands-299-c.asp',
-'great britain': 'https://saltdeanstamps.com/great-britain-10-c.asp',
-'isle of man': 'https://saltdeanstamps.com/isle-of-man-15-c.asp',
-'british commonwealth': 'https://saltdeanstamps.com/british-commonwealth-351-c.asp'
-}
-
+# choose input category
+categories = get_main_categories()
 for category_item in categories.items():
     print(category_item)
 

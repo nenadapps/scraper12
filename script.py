@@ -138,6 +138,12 @@ def get_details(url):
         stamp['raw_text'] = raw_text
     except:
         stamp['raw_text'] = None
+        
+    try:
+    	temp = raw_text.split(' ')
+    	stamp['SG']=temp[-1]
+    except:
+    	stamp['SG']=None
 
     stamp['currency'] = 'GBP'
     

@@ -169,6 +169,15 @@ def get_details(url):
         stamp['sku'] = sku
     except:
         stamp['sku'] = None
+        
+    try:
+        sold_out = html.select("#_EKM_PRODUCTADDCARTMESSAGE")[0].get_text().strip()
+        if sold_out == 'Sorry, this item is out of stock':
+            stamp['sold'] = 1
+        else:
+            stamp['sold'] = 0
+    except:
+        stamp['sold'] = None     
 
     try:
         raw_text_temp = html.find_all("span", {"itemprop":"description"})[0].get_text().strip()

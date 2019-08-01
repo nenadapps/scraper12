@@ -96,7 +96,6 @@ def get_categories(url):
             items.append(item_url)
     except: 
         pass
-    shuffle(list(set(items)))
     return items
 
 def get_main_categories():
@@ -220,11 +219,12 @@ def get_details(url):
     print('+++++++++++++')
     sleep(randint(25, 65))
     return stamp
-'''  
+'''
 def file_names(stamp):
     file_name = []
     rand_string = "RAND_"+str(randint(0,1000000))
     file_name = [rand_string+"-" + str(i) + ".png" for i in range(len(stamp['image_urls']))]
+    print (file_name)
     return(file_name)
 
 def query_for_previous(stamp):
@@ -244,24 +244,24 @@ def query_for_previous(stamp):
     stamp['raw_text'],
     stamp['scrape_date'], 
     stamp['price'], 
-    stamp['currency']))
+    stamp['currency'],
+    stamp['sold']))
     
     if len(all_rows) > 0:
         print ("This is in the database already")
         conn1 = sqlite3.connect('Reference_data.db')
         c = conn1.cursor()
-        c.executemany("""INSERT INTO price_list (url, raw_text, scrape_date, price, currency) VALUES(?,?,?,?,?)""", price_update)
+        c.executemany("""INSERT INTO price_list (url, raw_text, scrape_date, price, currency,sold) VALUES(?,?,?,?,?,?)""", price_update)
         conn1.commit()
         conn1.close()
         print (" ")
-        #url_count(count)
         sleep(randint(10,45))
-        next_stemp = 'continue'
+        next_step = 'continue'
     else:
         os.chdir("/Volumes/Stamps/")
         conn2 = sqlite3.connect('Reference_data.db')
         c2 = conn2.cursor()
-        c2.executemany("""INSERT INTO price_list (url, raw_text, scrape_date, price, currency) VALUES(?,?,?,?,?)""", price_update)
+        c2.executemany("""INSERT INTO price_list (url, raw_text, scrape_date, price, currency,sold) VALUES(?,?,?,?,?,?)""", price_update)
         conn2.commit()
         conn2.close()
         next_step = 'pass'
@@ -273,11 +273,11 @@ def db_update_image_download(stamp):
     directory = "/Volumes/Stamps/stamps/saltdean/" + str(datetime.datetime.today().strftime('%Y-%m-%d')) +"/"
     image_paths = []
     names = file_names(stamp)
-    image_paths = [directory + names[i] for i in range(len(names))]
     if not os.path.exists(directory):
         os.makedirs(directory)
     os.chdir(directory)
-    for item in range(0,len(names)):
+    image_paths = [directory + names[i] for i in range(len(names))]
+    for item in range(1,len(names)):
         print (stamp['image_urls'][item])
         try:
             imgRequest1=req.get(stamp['image_urls'][item],headers=hdr, timeout=60, stream=True)
@@ -292,9 +292,7 @@ def db_update_image_download(stamp):
                 shutil.copyfileobj(imgRequest1.raw, localFile)
                 sleep(randint(18,30))
     stamp['image_paths']=", ".join(image_paths)
-    #url_count += len(image_paths)
     database_update =[]
-
     # PUTTING NEW STAMPS IN DB
     database_update.append((
         stamp['url'],
@@ -320,9 +318,10 @@ def db_update_image_download(stamp):
     print ("++++++++++++")
     print (" ")
     sleep(randint(45,140)) 
+
+connectTor()
 '''
 count = 0
-# connectTor()
 # choose input category
 categories = get_main_categories()
 for category_item in categories.items():
@@ -334,7 +333,6 @@ category = categories[selected_category_name]
 # loop through all subcategories
 subcategories = get_categories(category)
 for subcategory in subcategories:
-	count += 1
 	# loop through all subcategories of level 2
 	subcategories2 = get_categories(subcategory)
 	if subcategories2:
@@ -342,7 +340,6 @@ for subcategory in subcategories:
 	else:
 		page_urls = subcategory
 	for page_url in page_urls:
-		count += 1
 		while(page_url):
 			page_items, page_url = get_page_items(page_url)
 			# loop through all items on current page
@@ -356,8 +353,8 @@ for subcategory in subcategories:
 				else:
 					pass
 				stamp = get_details(page_item)
+				#count += len(file_names(stamp))
 				'''
-				count += len(file_names(stamp))
 				next_step = query_for_previous(stamp)
 				if next_step == 'continue':
 					print('Only updating price')

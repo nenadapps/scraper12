@@ -336,9 +336,9 @@ for subcategory in subcategories:
 	# loop through all subcategories of level 2
 	subcategories2 = get_categories(subcategory)
 	if subcategories2:
-		page_urls = subcategories2
+	    page_urls = subcategories2
 	else:
-		page_urls = subcategory
+	    page_urls = [subcategory]
 	for page_url in page_urls:
 		while(page_url):
 			page_items, page_url = get_page_items(page_url)

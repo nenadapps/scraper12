@@ -55,7 +55,6 @@ def get_html(url):
         html_content = BeautifulSoup(html_page, "html.parser")
     except:
         pass
-
     return html_content
 
 def get_page_items(url):
@@ -82,7 +81,6 @@ def get_page_items(url):
         pass
 
     shuffle(list(set(items)))
-
     return items, next_url
 
 def get_categories(url):
@@ -113,7 +111,6 @@ def get_main_categories():
                 items[item_text] = item_url
     except: 
         pass
-
     return items
 
 def get_details(url):
@@ -348,12 +345,11 @@ for subcategory in subcategories:
 				if count > randint(100, 256):
 					print('Sleeping...')
 					sleep(randint(600, 4000))
-					#connectTor()
+					#renew_tor()
 					count = 0
 				else:
 					pass
 				stamp = get_details(page_item)
-				#count += len(file_names(stamp))
 				'''
 				next_step = query_for_previous(stamp)
 				if next_step == 'continue':
@@ -366,3 +362,4 @@ for subcategory in subcategories:
 					break
 				db_update_image_download(stamp)
 				'''
+print('Scrape Complete')
